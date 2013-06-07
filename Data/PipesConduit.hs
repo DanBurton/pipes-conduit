@@ -40,7 +40,7 @@ proxyAsConduit p = ConduitM (Monad.liftM eitherToMaybe pipe) where
 
 proxyAsPipe :: Monad m => ProxyFast a' a () b m r -> Conduit.Pipe l a b u m (Either u r)
 proxyAsPipe = \case
-  ProxyFast.Request (_ :: b') onRespond ->
+  ProxyFast.Request (_ :: a') onRespond ->
     Conduit.NeedInput (proxyAsPipe . onRespond) (\(u :: u) -> return (Left u))
 
   ProxyFast.Respond (b :: b) onRequest ->
