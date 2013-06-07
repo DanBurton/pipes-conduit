@@ -41,10 +41,12 @@ proxyAsPipe = \case
   ProxyFast.Pure (r :: r) ->
     Conduit.Done r
 
-conduitAsProxy :: Proxy p => ConduitM a b IO r -> () -> ExceptionP (StateP [a] p) () a b' b SafeIO r
+conduitAsProxy :: Proxy p => ConduitM a b IO r -> () ->
+                  ExceptionP (StateP [a] p) () a b' b SafeIO r
 conduitAsProxy (ConduitM p) () = pipeAsProxy p
 
-pipeAsProxy :: Proxy p => Conduit.Pipe l a b () IO r -> ExceptionP (StateP [l] p) () a b' b SafeIO r
+pipeAsProxy :: Proxy p => Conduit.Pipe l a b () IO r ->
+               ExceptionP (StateP [l] p) () a b' b SafeIO r
 pipeAsProxy = \case
   Conduit.HaveOutput next finalize (b :: b) ->
     Safe.finally id finalize (Proxy.respond b) >> pipeAsProxy next
